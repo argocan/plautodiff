@@ -1,0 +1,6 @@
+mnist.pkl.gz
+**/*.pyc
+.idea
+*.json
+__pycache__
+**/__pycache__
