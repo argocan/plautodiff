@@ -3,6 +3,7 @@ from pldiffer import Tensor
 from pldiffer import Operations as op
 from utils import mnist_util as mnist
 from utils import BatchIterator
+from time import time
 
 minp, mout, mtest, mtestout = mnist.load_data_set()
 
@@ -22,7 +23,8 @@ def calc_model(b_in):
     z2 = op.matmul(a1, W2) + b2
     return op.softmax(z2)
 
-for i in range(0, 100):
+start = time()
+for i in range(0, 10):
     bit = BatchIterator(minp, mout, 100)
     iter_loss = 0
     for b_in, b_out in bit:
@@ -43,3 +45,5 @@ for i in range(0, 100):
     actual = calc_model(mtest)
     err_ratio = mnist.score_result(actual.data, mtestout)
     print("Iteration {0} loss: {1} score {2}%".format(i, iter_loss, err_ratio))
+end = time()
+print(end - start)
