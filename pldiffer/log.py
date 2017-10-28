@@ -2,6 +2,17 @@ import numpy as np
 from typing import List
 from pldiffer.operation import Operation
 from pldiffer.tensor import Tensor
+from numba import jit
+
+
+@jit(nopython=True)
+def log(x):
+    return np.log(x)
+
+
+@jit(nopython=True)
+def grad(g, x):
+    return g * np.true_divide(np.float32(1.0), x)
 
 
 class Log(Operation):
@@ -11,8 +22,8 @@ class Log(Operation):
         self.x = operands[0]
 
     def forward(self):
-        return Tensor(np.log(self.x.data), diff=self.diff)
+        return Tensor(log(self.x.data), diff=self.diff)
 
     def backward(self, g_in: np.ndarray):
-        dx = g_in * np.true_divide(1.0, self.x.data) if self.x.diff else None
+        dx = grad(g_in, self.x.data) if self.x.diff else None
         return [dx]

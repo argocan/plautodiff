@@ -2,6 +2,7 @@ from typing import List
 import numpy as np
 from pldiffer.operation import Operation
 from pldiffer.tensor import Tensor
+from utils import softmax, softmax_jacobian, softmax_grad
 
 
 class Softmax(Operation):
@@ -12,25 +13,10 @@ class Softmax(Operation):
         self.cache = None
 
     def forward(self):
-        self.cache = Softmax.calc_softmax(self.x.data)
+        self.cache = softmax(self.x.data)
         return Tensor(self.cache, diff=self.diff)
 
     def backward(self, g_in: np.ndarray):
-        jacobian = np.array([Softmax.jacobian(row) for row in self.cache])
-        dx = np.einsum('ij,ijk->ik', g_in, jacobian)
+        dx = softmax_grad(g_in, softmax_jacobian(self.cache))
         return [dx]
 
-    @staticmethod
-    def calc_softmax(inp):
-
-        def softmax(v):
-            den = np.sum(np.exp(v))
-            return np.true_divide(np.exp(v), den)
-
-        maxes = np.max(inp, axis=1, keepdims=True)
-        x = inp - maxes
-        return np.array([softmax(row) for row in x])
-
-    @staticmethod
-    def jacobian(s):
-        return np.diag(s) - np.outer(s, s)

@@ -3,4 +3,6 @@ mnist.pkl.gz
 .idea
 *.json
 __pycache__
-**/__pycache__
+**/__pycache_
+test.py
+

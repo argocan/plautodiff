@@ -1,7 +1,5 @@
-import numpy as np
 from typing import List, Union
 from pldiffer.tensor import Tensor
-from pldiffer.operation import Operation
 from pldiffer.add import Add
 from pldiffer.mul import Mul
 from pldiffer.matmul import Matmul
@@ -9,7 +7,10 @@ from pldiffer.quadratic import Quadratic
 from pldiffer.exp import Exp
 from pldiffer.log import Log
 from pldiffer.sigmoid import Sigmoid
+from pldiffer.relu import Relu
 from pldiffer.softmax import Softmax
+from pldiffer.log_softmax import LogSoftmax
+from pldiffer.softmax_cross_entropy import SoftmaxCrossEntropy
 from pldiffer.sum import Sum
 
 
@@ -61,8 +62,20 @@ class Operations:
         return Operations.do_op(Sigmoid, [x])
 
     @staticmethod
+    def relu(x: Tensor) -> Tensor:
+        return Operations.do_op(Relu, [x])
+
+    @staticmethod
     def softmax(x: Tensor) -> Tensor:
         return Operations.do_op(Softmax, [x])
+
+    @staticmethod
+    def log_softmax(x: Tensor) -> Tensor:
+        return Operations.do_op(LogSoftmax, [x])
+
+    @staticmethod
+    def softmax_cross_entropy(x: Tensor, y: Tensor = None) -> Tensor:
+        return Operations.do_op(SoftmaxCrossEntropy, [x, y])
 
     @staticmethod
     def sum(x: Tensor) -> Tensor:

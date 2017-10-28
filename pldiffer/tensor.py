@@ -47,4 +47,4 @@ class Tensor:
 
     def calc_gradients(self):
         self.__reset_grad__()
-        self.__backward__(np.array([1.0]))
+        self.__backward__(np.array([1.0], dtype=np.float32))
