@@ -1,22 +1,12 @@
-from torch.autograd import Variable
-import torch
+from pldiffer.tensor import Tensor
 from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
-from numba import jit, prange, autojit
+from numba import jit, prange, vectorize, float32
 
 
-def numpy_to_variable(t, cuda=True):
-    tv = torch.from_numpy(t).float().cuda() if cuda else torch.from_numpy(t).float()
-    return Variable(tv)
-
-
-def zeros_like_list(parameter_list: List[Variable]):
-    return [torch.zeros(p.size()).cuda() for p in parameter_list]
-
-
-def bernoulli(dim: List[int], prob: float=0.5):
-    return torch.bernoulli(torch.zeros(dim).add_(prob)).cuda()
+def zeros_like_list(parameter_list: List[Tensor]):
+    return [np.zeros_like(p.data, dtype=np.float32) for p in parameter_list]
 
 
 def plot_loss(train_loss_values, test_loss_values):
@@ -47,3 +37,23 @@ def einsum_ij_ijk_ik(x: np.ndarray, y: np.ndarray):
     for i in range(0, x.shape[0]):
         to_ret[i] = np.dot(x[i], y[i])
     return to_ret
+
+
+@vectorize([float32(float32, float32, float32)], target='parallel')
+def running_avg(acc, beta, newval):
+    return beta * acc + (1 - beta) * newval
+
+
+@vectorize([float32(float32, float32, float32)], target='parallel')
+def running_avg_bias_correction(acc, beta, iteration):
+    return acc / (1 - beta ** iteration)
+
+
+@vectorize([float32(float32, float32, float32)], target='parallel')
+def running_avg_squared(acc, beta, newval):
+    return beta * acc + (1 - beta) * (newval ** 2)
+
+
+@vectorize([float32(float32, float32, float32, float32)], target='parallel')
+def grad_square_delta(lr, g, v_hat, eps):
+    return (lr * g) / (v_hat ** 0.5 + eps)
