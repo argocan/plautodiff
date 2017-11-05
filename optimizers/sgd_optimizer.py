@@ -13,4 +13,3 @@ class SGDOptimizer(Optimizer):
         loss.calc_gradients()
         for p in self.parameters:
             p.data -= self.learning_rate * p.grad
-

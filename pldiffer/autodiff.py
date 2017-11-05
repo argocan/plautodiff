@@ -1,9 +1,12 @@
 from typing import List, Union
+import numpy as np
 from pldiffer.tensor import Tensor
 from pldiffer.add import Add
 from pldiffer.mul import Mul
+from pldiffer.div import Div
 from pldiffer.matmul import Matmul
 from pldiffer.quadratic import Quadratic
+from pldiffer.pow import Pow
 from pldiffer.exp import Exp
 from pldiffer.log import Log
 from pldiffer.sigmoid import Sigmoid
@@ -42,12 +45,24 @@ class Operations:
         return Operations.do_op(Mul, Operations.cast_to_tensors([x, y]))
 
     @staticmethod
+    def div(x: [Tensor, float], y: [Tensor, float]) -> Tensor:
+        return Operations.do_op(Div, Operations.cast_to_tensors([x, y]))
+
+    @staticmethod
     def matmul(x: Tensor, y: Tensor) -> Tensor:
         return Operations.do_op(Matmul, [x, y])
 
     @staticmethod
     def quadratic(x: Tensor) -> Tensor:
         return Operations.do_op(Quadratic, [x])
+
+    @staticmethod
+    def pow(x: Tensor, p: Tensor) -> Tensor:
+        return Operations.do_op(Pow, Operations.cast_to_tensors([x, p]))
+
+    @staticmethod
+    def sqrt(x: Tensor) -> Tensor:
+        return Operations.pow(x, 0.5)
 
     @staticmethod
     def exp(x: Tensor) -> Tensor:
