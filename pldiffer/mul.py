@@ -25,5 +25,5 @@ class Mul(Operation):
         mx = mul(g_in, self.y.data) if self.x.diff else None
         my = mul(g_in, self.x.data) if self.y.diff else None
         dx = broadcast(self.x.data, mx) if mx is not None else None
-        dy = broadcast(self.y.data, my) if mx is not None else None
+        dy = broadcast(self.y.data, my) if my is not None else None
         return [dx, dy]

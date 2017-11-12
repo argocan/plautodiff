@@ -43,6 +43,9 @@ class Tensor:
     def __pow__(self, power, modulo=None):
         return pldiffer.autodiff.Operations.pow(self, power)
 
+    def __neg__(self):
+        return pldiffer.autodiff.Operations.mul(-1.0, self)
+
     def __backward__(self, g_in: np.ndarray):
         if self.grad is None:
             self.grad = g_in
